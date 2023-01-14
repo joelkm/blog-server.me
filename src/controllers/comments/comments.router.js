@@ -2,6 +2,7 @@ const express = require('express');
 const {
     httpGetAllComments,
     httpAddNewComment,
+    httpEditComment,
     httpDeleteComment
 } = require('./comments.controller')
 
