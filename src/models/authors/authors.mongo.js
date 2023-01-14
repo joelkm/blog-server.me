@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const employeesSchema = new mongoose.Schema({
+const authorsSchema = new mongoose.Schema({
     name: String,
     email: String
 });

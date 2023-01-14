@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 
-const employeesSchema = new mongoose.Schema({
-    name: String,
-    email: String
+const commentsSchema = new mongoose.Schema({
+    userId: String,
+    content: String,
+    blogId: String
 });
 
-module.exports = mongoose.model('author', authorsSchema);
+module.exports = mongoose.model('comment', commentsSchema);

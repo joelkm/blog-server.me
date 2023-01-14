@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
-const employeesSchema = new mongoose.Schema({
+const usersSchema = new mongoose.Schema({
     name: String,
     email: String
 });
 
-module.exports = mongoose.model('author', authorsSchema);
+module.exports = mongoose.model('user', usersSchema);

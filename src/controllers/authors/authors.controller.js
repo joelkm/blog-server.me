@@ -1,7 +1,6 @@
 const { getAllAuthors,
     addNewAuthor, 
-    existsAuthorWithId,
-    deletedAuthorById} = require('../../models/authors/authors.model');
+    deleteAuthorById} = require('../../models/authors/authors.model');
 
 const { getBlogsFromAuthor } = require('../../models/blogs/blogs.model');
 
@@ -37,15 +36,9 @@ function httpAddNewAuthor(req, res) {
 }
 
 function httpDeleteAuthor(req, res) {
-    const authorId = Number(req.params.id);
-    
-    if(!existsAuthorWithId(authorId))
-    return res.status(404).json({
-        error: 'Author not found'
-    });
+    const authorId = Number(req.body.id);
 
-    const deleted = deletedAuthorById(authorId);
-    return res.status(200).json(deleted);
+    return res.status(200).json(deleteAuthorById(authorId));
 }
 /* Author's Blogs
 function httpGetBlogsFromAuthor(req, res) {
