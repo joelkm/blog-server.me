@@ -1,7 +1,10 @@
 const { getAllBlogs,
     getBlogById,
-    addNewBlog, 
+    addNewBlog,
+    editBlogById, 
     deleteBlogById} = require('../../models/blogs/blogs.model');
+
+const {getAuthorById} = require('../../models/authors/authors.model')
 
 const { getCommentsFromBlog } = require('../../models/comments/comments.model')
 
@@ -16,19 +19,30 @@ function httpGetBlogById(req, res) {
     return res.status(200).json(getBlogById(blogId))
 }
 
-// function httpGetCommentsFromBlog
+function httpGetCommentsFromBlog (req, res) {
+    const blogId = Number(req.body.blogId);
+
+    return res.status(200).json(getCommentsFromBlog(blogId));
+}
 
 function httpAddNewBlog(req, res) {
     const blog = req.body;
 
-    if(!blog.title || !blog.content || !blog.authors) {
+    if(!blog.title || !blog.content || !blog.authorsIds) {
         return res.status(400).json({
             error: 'Missing required blog property'
         });
     }
-
-    addNewBlog(blog);
-    return res.status(201).json(blog);
+    if(authorsIds.forEach(e => {
+        getAuthorById(e);
+    }) != null) {
+        const newBlog = addNewBlog(blog);
+        return res.status(201).json(newBlog);
+    } else {
+        return res.status(400).json({
+            error: 'Author not registered'
+        });
+    }
 }
 
 

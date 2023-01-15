@@ -15,8 +15,11 @@ function httpGetUserById (req, res) {
     return res.status(200).json(getUserById(userId));
 }
 
-// function httpGetCommentsFromUser (req, res){
+function httpGetCommentsFromUser (req, res){
+    const userId = Number(req.body.userId);
 
+    return res.status(200).json(getCommentsFromUser(userId));
+}
 
 function httpAddNewUser(req, res) {
     const user = req.body;

@@ -15,9 +15,11 @@ function httpGetAuthorById (req, res) {
     return res.status(200).json(getAuthorById(authorId));
 }
 
-/*function httpGetBlogsFromAuthor(req, res) {
-    return res.status(200).json(getBlogsFromAuthor());
-*/
+function httpGetBlogsFromAuthor(req, res) {
+    const authorId = Number(req.body.authorId);
+
+    return res.status(200).json(getBlogsFromAuthor(authorId));
+}
 
 function httpAddNewAuthor(req, res) {
     const author = req.body;
@@ -38,8 +40,7 @@ function httpAddNewAuthor(req, res) {
         })
     }
 
-    addNewAuthor(author);
-    return res.status(201).json(author);
+    return res.status(201).json(addNewAuthor(author));
 }
 
 function httpDeleteAuthor(req, res) {
@@ -47,14 +48,7 @@ function httpDeleteAuthor(req, res) {
 
     return res.status(200).json(deleteAuthorById(authorId));
 }
-/* Author's Blogs
-function httpGetBlogsFromAuthor(req, res) {
-    const blogId = Number(req.body.id);
-    
-    te
 
-}
-*/
 module.exports = {
     httpGetAllAuthors,
     httpGetAuthorById,

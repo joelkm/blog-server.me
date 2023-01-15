@@ -1,11 +1,19 @@
 const authors = require('./authors.mongo');
 
 async function getAllAuthors() {
-    return await authors.find({}, 'name email');
+    try {
+        return await authors.find({}, 'name email');
+    } catch (err) {
+        console.error(`Could not find authors: ${err}`);
+    }
 }
 
 async function getAuthorById(authorId) {
-    return await authors.find({_id: authorId}, 'name email')
+    try {
+        return await authors.find({_id: authorId}, 'name email')
+    } catch (err) {
+        console.error(`Could not find author: ${err}`);
+    }
 }
 
 async function addNewAuthor(author) {

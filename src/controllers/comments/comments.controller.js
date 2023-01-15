@@ -1,7 +1,11 @@
 const { addNewComment,
-    editComment,
-    deleteComment
+    editCommentById,
+    deleteCommentById
 } = require('../../models/comments/comments.model');
+
+const {getUserById} =require('../../models/users/users.model');
+
+const {getBlogById} =require('../../models/blogs/blogs.model');
 
 function httpAddNewComment(req, res) {
     const comment = req.body;
@@ -9,6 +13,16 @@ function httpAddNewComment(req, res) {
     if(!comment.content || !comment.userId || !comment.blogId) {
         return res.status(400).json({
             error: 'Missing required comment property'
+        });
+    }
+    if(!getUserById(userId)) {
+        return res.status(400).json({
+            error: 'User not registered'
+        });
+    }
+    if(!getBlogById(blogId)) {
+        return res.status(400).json({
+            error: 'Blog not registered'
         });
     }
 
