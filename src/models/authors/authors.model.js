@@ -4,6 +4,10 @@ async function getAllAuthors() {
     return await authors.find({}, 'name email');
 }
 
+async function getAuthorById(authorId) {
+    return await authors.find({_id: authorId}, 'name email')
+}
+
 async function addNewAuthor(author) {
     try {
         const newAuthor = await authors.create({
@@ -27,6 +31,7 @@ async function deleteAuthorById(authorId) {
 
 module.exports = {
     getAllAuthors,
+    getAuthorById,
     addNewAuthor,
     deleteAuthorById
 }

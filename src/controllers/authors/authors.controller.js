@@ -1,4 +1,5 @@
 const { getAllAuthors,
+    getAuthorById,
     addNewAuthor, 
     deleteAuthorById} = require('../../models/authors/authors.model');
 
@@ -8,9 +9,15 @@ function httpGetAllAuthors(req, res) {
     return res.status(200).json(getAllAuthors());
 }
 
-function httpGetBlogsFromAuthor(req, res) {
-    return res.status(200).json(getBlogsFromAuthor())
+function httpGetAuthorById (req, res) {
+    const authorId = Number(req.body.id);
+
+    return res.status(200).json(getAuthorById(authorId));
 }
+
+/*function httpGetBlogsFromAuthor(req, res) {
+    return res.status(200).json(getBlogsFromAuthor());
+*/
 
 function httpAddNewAuthor(req, res) {
     const author = req.body;
@@ -44,17 +51,13 @@ function httpDeleteAuthor(req, res) {
 function httpGetBlogsFromAuthor(req, res) {
     const blogId = Number(req.body.id);
     
-    if(!existsBlogWithId(blogId))
-    return res.status(404).json({
-        error: 'Blog not found'
-    });
-    
     te
 
 }
 */
 module.exports = {
     httpGetAllAuthors,
+    httpGetAuthorById,
     httpGetBlogsFromAuthor,
     httpAddNewAuthor,
     httpDeleteAuthor

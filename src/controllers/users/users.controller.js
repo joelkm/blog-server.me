@@ -1,11 +1,22 @@
 const { getAllUsers,
-    addNewUser, 
-    existsUserWithId,
-    deletedUserById} = require('../../models/users.model');
+    getUserById,
+    addNewUser,
+    deleteUserById} = require('../../models/users/users.model');
+
+const { getCommentsFromUser } = require('../../models/comments/comments.model')
 
 function httpGetAllUsers(req, res) {
     return res.status(200).json(getAllUsers());
 }
+
+function httpGetUserById (req, res) {
+    const userId = Number(req.body.id);
+
+    return res.status(200).json(getUserById(userId));
+}
+
+// function httpGetCommentsFromUser (req, res){
+
 
 function httpAddNewUser(req, res) {
     const user = req.body;
@@ -32,18 +43,15 @@ function httpAddNewUser(req, res) {
 
 function httpDeleteUser(req, res) {
     const userId = Number(req.params.id);
-    
-    if(!existsUserWithId(userId))
-    return res.status(404).json({
-        error: 'user not found'
-    });
 
-    const deleted = deletedUserById(userId);
+    const deleted = deleteUserById(userId);
     return res.status(200).json(deleted);
 }
 
 module.exports = {
     httpGetAllUsers,
+    httpGetUserById,
+    httpGetCommentsFromUser,
     httpAddNewUser,
     httpDeleteUser
 }

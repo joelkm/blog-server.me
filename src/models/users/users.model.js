@@ -4,6 +4,10 @@ async function getAllUsers() {
     return await users.find({}, 'name email');
 }
 
+async function getUserById(userId) {
+    return await users.find({_id: userId}, 'name email')
+}
+
 async function addNewUser(user) {
     try {
         const newUser = await users.create({
@@ -27,6 +31,7 @@ async function deleteUserById(userId) {
 
 module.exports = {
     getAllUsers,
+    getUserById,
     addNewUser,
     deleteUserById
 }

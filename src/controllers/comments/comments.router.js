@@ -1,6 +1,5 @@
 const express = require('express');
 const {
-    httpGetAllComments,
     httpAddNewComment,
     httpEditComment,
     httpDeleteComment
@@ -8,8 +7,8 @@ const {
 
 const commentsRouter = express.Router();
 
-commentsRouter.get('/', httpGetAllComments);
 commentsRouter.post('/', httpAddNewComment);
+commentsRouter.put('/:id', httpEditComment);
 commentsRouter.delete('/:id', httpDeleteComment);
 
 module.exports = commentsRouter;
