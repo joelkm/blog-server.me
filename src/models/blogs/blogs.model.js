@@ -2,7 +2,7 @@ const blogs = require('./blogs.mongo');
 
 async function getAllBlogs () {
     try {
-        return await blogs.find({}, 'title content authors');
+        return await blogs.find({}, 'title content authorsIds');
     } catch (err) {
         console.error(`Could not find blogs: ${err}`);
     }
