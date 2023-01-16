@@ -5,23 +5,45 @@ const { getAllUsers,
 
 const { getCommentsFromUser } = require('../../models/comments/comments.model')
 
-function httpGetAllUsers(req, res) {
-    return res.status(200).json(getAllUsers());
+async function httpGetAllUsers(req, res) {
+    const users = await getAllUsers()
+    
+    if(users.length == 0) {
+        return res.status(404).json({
+            error: 'No users found'
+        })
+    }
+
+    return res.status(200).json(users);
 }
 
-function httpGetUserById (req, res) {
-    const userId = Number(req.body.id);
+async function httpGetUserById (req, res) {
+    const userId = req.params.id;
 
-    return res.status(200).json(getUserById(userId));
+    const user = await getUserById(userId);
+    
+    if(user.length == 0) {
+        return res.status(404).json({
+            error: 'No users found'
+        })
+    }
+    return res.status(200).json(user);
 }
 
-function httpGetCommentsFromUser (req, res){
-    const userId = Number(req.body.userId);
+async function httpGetCommentsFromUser (req, res){
+    const userId = req.params.id;
 
-    return res.status(200).json(getCommentsFromUser(userId));
+    const comments = await getCommentsFromUser(userId);
+    if(comments.length == 0) {
+        return res.status(404).json({
+            error: 'No comments found'
+        })
+    }
+
+    return res.status(200).json(comments);
 }
 
-function httpAddNewUser(req, res) {
+async function httpAddNewUser(req, res) {
     const user = req.body;
 
     if(!user.name || !user.email) {
@@ -34,21 +56,28 @@ function httpAddNewUser(req, res) {
             error: 'The full name is required'
         })
     }
-    if(user.email.indexOf('@')<0 && user.email.indexOf('.')<0) {
+    if(user.email.indexOf('@')<0 || user.email.indexOf('.')<0) {
         return res.status(400).json({
             error: 'Invalid email adress'
         })
     }
 
-    addNewUser(user);
-    return res.status(201).json(user);
+    return res.status(201).json(await addNewUser(user));
 }
 
-function httpDeleteUser(req, res) {
-    const userId = Number(req.params.id);
+async function httpDeleteUser(req, res) {
+    const userId = req.params.id;
+    const deleteResult = await deleteUserById(userId);
 
-    const deleted = deleteUserById(userId);
-    return res.status(200).json(deleted);
+    if(deleteResult.deletedCount == 0) {
+        return res.status(400).json({
+            error: 'Nothing was deleted'
+        });
+    }
+
+    return res.status(200).json({
+        Result: "Succesfully deleted"
+    });
 }
 
 module.exports = {

@@ -1,7 +1,7 @@
 const http = require('http');
 const mongoose = require('mongoose');
 
-// const MONGO_URL = 
+const MONGO_URL = 'mongodb+srv://retink-task:retink@cluster0.dklxm8g.mongodb.net/retink-task?retryWrites=true&w=majority'
 
 
 const app = require('./app');
@@ -15,7 +15,7 @@ mongoose.connection.once('open', () => {
 });
 
 mongoose.connection.on('error', (err) => {
-    console.error(error);
+    console.error(err);
 })
 
 async function startServer() {

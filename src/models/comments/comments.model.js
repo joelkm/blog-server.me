@@ -1,6 +1,6 @@
 const comments = require('./comments.mongo');
 
-async function addNewComment () {
+async function addNewComment (comment) {
     try {
         const newComment = await comments.create({
             userId: comment.userId,
@@ -15,10 +15,10 @@ async function addNewComment () {
 
 async function editCommentById (commentId ,newCommentInfo) {
     try {
-        editedComment = await comments.findByIdAndUpdate({commentId},{"title": newCommentInfo.title, "content": newCommentInfo.content, "authors": newCommentInfo.authors});
+        editedComment = await comments.findByIdAndUpdate({_id: commentId},{"userId": newCommentInfo.userId, "content": newCommentInfo.content, "blogId": newCommentInfo.blogId});
         return editedComment;
     } catch (err) {
-        console.error(`Could not add comment: ${err}`);
+        console.error(`Could not edit comment: ${err}`);
     }
 }
 
@@ -39,7 +39,7 @@ async function getCommentsFromUser (usrId) {
     }
 }
 
-async function getCommentsFromBlog () {
+async function getCommentsFromBlog (blId) {
     try {
         return await comments.find({blogId: blId}, 'userId content blogId');
     } catch (err) {

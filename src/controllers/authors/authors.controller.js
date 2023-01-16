@@ -5,23 +5,45 @@ const { getAllAuthors,
 
 const { getBlogsFromAuthor } = require('../../models/blogs/blogs.model');
 
-function httpGetAllAuthors(req, res) {
-    return res.status(200).json(getAllAuthors());
+async function httpGetAllAuthors(req, res) {
+    
+    const authors = await getAllAuthors();
+    if(authors.length == 0) {
+        return res.status(404).json({
+            error: 'No authors found'
+        })
+    }
+
+    return res.status(200).json(authors);
 }
 
-function httpGetAuthorById (req, res) {
-    const authorId = Number(req.body.id);
+async function httpGetAuthorById (req, res) {
+    const authorId = req.params.id;
 
-    return res.status(200).json(getAuthorById(authorId));
+    const author = await getAuthorById(authorId);
+    
+    if(author.length == 0) {
+        return res.status(404).json({
+            error: 'No authors found'
+        })
+    }
+
+    return res.status(200).json(author);
 }
 
-function httpGetBlogsFromAuthor(req, res) {
-    const authorId = Number(req.body.authorId);
+async function httpGetBlogsFromAuthor(req, res) {
+    const authorId = req.params.id;
 
-    return res.status(200).json(getBlogsFromAuthor(authorId));
+    const blogs = await getBlogsFromAuthor(authorId);
+    if(blogs.length == 0) {
+        return res.status(404).json({
+            error: 'No blogs found'
+        })
+    }
+    return res.status(200).json(blogs);
 }
 
-function httpAddNewAuthor(req, res) {
+async function httpAddNewAuthor(req, res) {
     const author = req.body;
 
     if(!author.name || !author.email) {
@@ -34,19 +56,29 @@ function httpAddNewAuthor(req, res) {
             error: 'The full name is required'
         })
     }
-    if(author.email.indexOf('@')<0 && author.email.indexOf('.')<0) {
+    if(author.email.indexOf('@')<0 || author.email.indexOf('.')<0) {
         return res.status(400).json({
             error: 'Invalid email adress'
         })
     }
 
-    return res.status(201).json(addNewAuthor(author));
+    return res.status(201).json(await addNewAuthor(author));
 }
 
-function httpDeleteAuthor(req, res) {
-    const authorId = Number(req.body.id);
+async function httpDeleteAuthor(req, res) {
+    const authorId = req.params.id;
 
-    return res.status(200).json(deleteAuthorById(authorId));
+    const deleteResult = await deleteAuthorById(authorId)
+
+    if(deleteResult.deletedCount == 0) {
+        return res.status(400).json({
+            error: 'Nothing was deleted'
+        });
+    }
+
+    return res.status(200).json({
+        Result: "Succesfully deleted"
+    });
 }
 
 module.exports = {

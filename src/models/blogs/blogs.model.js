@@ -8,9 +8,15 @@ async function getAllBlogs () {
     }
 }
 
-async function getBlogById (blogId) {
+async function getBlogById (blogId, visit) {
     try {
-        return await blogs.find({_id: blogId}, 'title content authors');
+        if(visit) {
+            await blogs.findByIdAndUpdate({_id: blogId}, {$inc:{viewCount: 1}})
+        }
+        
+        blog = await blogs.findById({_id: blogId}, 'title content authors viewCount likeCount');
+
+        return blog;
     } catch (err) {
         console.error(`Could not find blog: ${err}`);
     }
@@ -21,7 +27,9 @@ async function addNewBlog (blog) {
         const newBlog = await blogs.create({
             title: blog.title,
             content: blog.content,
-            authorsIds: blog.authorsIds
+            authorsIds: blog.authorsIds,
+            viewCount: 0,
+            likeCount: 0
         })
         return newBlog;
     } catch(err) {
@@ -31,14 +39,24 @@ async function addNewBlog (blog) {
 
 async function editBlogById (blogId, newBlogInfo) {
     try {
-        editedBlog = await blogs.findByIdAndUpdate({blogId},{"title": newBlogInfo.title, "content": newBlogInfo.content, "authorsIds": newBlogInfo.authorsIds});
+        editedBlog = await blogs.findByIdAndUpdate({_id: blogId},{"title": newBlogInfo.title, "content": newBlogInfo.content, "authorsIds": newBlogInfo.authorsIds});
         return editedBlog;
     } catch (err) {
         console.error(`Could not add blog: ${err}`);
     }
 }
 
-async function deleteBlogById () {
+async function likeBlog(blogId) {
+    try {
+        blog = await blogs.findByIdAndUpdate({_id: blogId}, {$inc:{likeCount: 1}});
+        
+        return blog;
+    } catch (err) {
+        console.error(`Could not find blog: ${err}`);
+    }
+}
+
+async function deleteBlogById (blogId) {
     try {
         deletedBlog = await blogs.deleteOne({_id: blogId});
         return deletedBlog;
@@ -59,7 +77,8 @@ module.exports = {
     getAllBlogs,
     getBlogById,
     addNewBlog,
-    editBlogById, 
+    editBlogById,
+    likeBlog, 
     deleteBlogById,
     getBlogsFromAuthor
 }

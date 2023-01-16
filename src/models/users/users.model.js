@@ -5,8 +5,12 @@ async function getAllUsers() {
 }
 
 async function getUserById(userId) {
-    return await users.find({_id: userId}, 'name email')
-}
+    try {
+        return await users.findById({_id: userId}, 'name email')
+    } catch (err) {
+        console.error(`Could not find the user: ${err}`)
+    }
+} 
 
 async function addNewUser(user) {
     try {

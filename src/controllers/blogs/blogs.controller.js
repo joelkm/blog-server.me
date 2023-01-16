@@ -2,6 +2,7 @@ const { getAllBlogs,
     getBlogById,
     addNewBlog,
     editBlogById, 
+    likeBlog,
     deleteBlogById} = require('../../models/blogs/blogs.model');
 
 const {getAuthorById} = require('../../models/authors/authors.model')
@@ -9,23 +10,44 @@ const {getAuthorById} = require('../../models/authors/authors.model')
 const { getCommentsFromBlog } = require('../../models/comments/comments.model')
 
 
-function httpGetAllBlogs(req, res) {
-    return res.status(200).json(getAllBlogs());
+async function httpGetAllBlogs(req, res) {
+    const blogs = await getAllBlogs();
+    if(blogs.length == 0) {
+        return res.status(404).json({
+            error: 'No blogs found'
+        })
+    }
+    return res.status(200).json(blogs);
 }
 
-function httpGetBlogById(req, res) {
-    const blogId = Number(req.body.id);
+async function httpGetBlogById(req, res) {
+    const blogId = req.params.id;
 
-    return res.status(200).json(getBlogById(blogId))
+    const blog = await getBlogById(blogId, true);
+    
+    if(blog.length == 0) {
+        return res.status(404).json({
+            error: 'No blogs found'
+        })
+    }
+
+    return res.status(200).json(blog)
 }
 
-function httpGetCommentsFromBlog (req, res) {
-    const blogId = Number(req.body.blogId);
+async function httpGetCommentsFromBlog (req, res) {
+    const blogId = req.params.id;
 
-    return res.status(200).json(getCommentsFromBlog(blogId));
+    const comments = await getCommentsFromBlog(blogId);
+    if(comments.length == 0) {
+        return res.status(404).json({
+            error: 'No comments found'
+        })
+    }
+
+    return res.status(200).json(comments);
 }
 
-function httpAddNewBlog(req, res) {
+async function httpAddNewBlog(req, res) {
     const blog = req.body;
 
     if(!blog.title || !blog.content || !blog.authorsIds) {
@@ -33,32 +55,88 @@ function httpAddNewBlog(req, res) {
             error: 'Missing required blog property'
         });
     }
-    if(authorsIds.forEach(e => {
-        getAuthorById(e);
-    }) != null) {
-        const newBlog = addNewBlog(blog);
-        return res.status(201).json(newBlog);
-    } else {
+    let result = true;
+    for (let index = 0; index < blog.authorsIds.length; index++) {
+        queryAuthorId = await getAuthorById(blog.authorsIds[index])
+        if(queryAuthorId.length == 0) {
+            result = false;
+        }
+    }
+
+    if(!result) {
         return res.status(400).json({
             error: 'Author not registered'
         });
     }
+    
+    const newBlog = await addNewBlog(blog);
+    return res.status(201).json(newBlog);
 }
 
 
-function httpEditBlog(req, res) {
-    const blogId = Number(req.body.id);
-    const newBlogInfo = req.body.new;
+async function httpEditBlog(req, res) {
+    const blogId = req.params.id;
+    const newBlogInfo = req.body;
 
-    edited = editBlogById(blogId, newBlogInfo);
-    return res.status(200).json(edited);
+    if(newBlogInfo.authorsIds) {
+        let result = true;
+        for (let index = 0; index < newBlogInfo.authorsIds.length; index++) {
+            queryAuthorId = await getAuthorById(newBlogInfo.authorsIds[index])
+            if(queryAuthorId.length == 0) {
+                result = false;
+            }
+        }
+
+        if(!result) {
+            return res.status(400).json({
+                error: 'Author not registered'
+            });
+        }
+    }
+
+    const editResult = await editBlogById(blogId, newBlogInfo)
+
+    if(!editResult) {
+        return res.status(400).json({
+            error: 'Nothing was edited'
+        });
+    }
+
+    return res.status(200).json({
+        Result: "Succesfully edited"
+    });
 }
 
-function httpDeleteBlog(req, res) {
-    const blogId = Number(req.body.id);
+async function httpLikeBlog(req, res) {
+    const blogId = req.params.id;
 
-    const deleted = deleteBlogById(blogId);
-    return res.status(200).json(deleted);
+    const likeResult = await likeBlog(blogId);
+
+    if(!likeResult) {
+        return res.status(400).json({
+            error: 'Like was not submitted'
+        });
+    }
+
+    return res.status(200).json({
+        Result: "Like submitted"
+    });
+}
+
+async function httpDeleteBlog(req, res) {
+    const blogId = req.params.id;
+
+    const deleteResult = await deleteBlogById(blogId);
+
+    if(deleteResult.deletedCount == 0) {
+        return res.status(400).json({
+            error: 'Nothing was deleted'
+        });
+    }
+
+    return res.status(200).json({
+        Result: "Succesfully deleted"
+    });
 }
 
 module.exports = {
@@ -67,5 +145,6 @@ module.exports = {
     httpGetCommentsFromBlog,
     httpAddNewBlog,
     httpEditBlog,
+    httpLikeBlog,
     httpDeleteBlog
 }

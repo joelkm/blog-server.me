@@ -7,7 +7,7 @@ const {getUserById} =require('../../models/users/users.model');
 
 const {getBlogById} =require('../../models/blogs/blogs.model');
 
-function httpAddNewComment(req, res) {
+async function httpAddNewComment(req, res) {
     const comment = req.body;
 
     if(!comment.content || !comment.userId || !comment.blogId) {
@@ -15,34 +15,70 @@ function httpAddNewComment(req, res) {
             error: 'Missing required comment property'
         });
     }
-    if(!getUserById(userId)) {
+    if(!(await getUserById(comment.userId))) {
         return res.status(400).json({
             error: 'User not registered'
         });
     }
-    if(!getBlogById(blogId)) {
+    if(!(await getBlogById(comment.blogId))) {
         return res.status(400).json({
             error: 'Blog not registered'
         });
     }
 
-    addNewComment(comment);
-    return res.status(201).json(comment);
+    const newComment = await addNewComment(comment)
+    return res.status(201).json(newComment);
 }
 
-function httpEditComment(req, res) {
-    const commentId = Number(req.body.id);
-    const newCommentInfo = req.body.new;
+async function httpEditComment(req, res) {
+    const commentId = req.params.id;
+    const newCommentInfo = req.body;
 
-    edited = editCommentById(commentId, newCommentInfo);
-    return res.status(200).json(edited);
+    if(newCommentInfo.userId) {
+        queryUserId = await getUserById(newCommentInfo.userId)
+        if(queryUserId.length == 0){
+            return res.status(400).json({
+                error: 'User not registered'
+            });
+        }
+    }
+
+    if(newCommentInfo.blogId) {
+        queryBlogId = await getBlogById(newCommentInfo.blogId)
+        if(queryBlogId.length == 0){
+            return res.status(400).json({
+                error: 'Blog not registered'
+            });
+        }
+    }
+
+    editResult = await editCommentById(commentId, newCommentInfo)
+
+    if(!editResult) {
+        return res.status(400).json({
+            error: 'Nothing was edited'
+        });
+    }
+
+    return res.status(200).json({
+        Result: "Succesfully edited"
+    });
 }
 
-function httpDeleteComment(req, res) {
-    const commentId = Number(req.body.id);
+async function httpDeleteComment(req, res) {
+    const commentId = req.params.id;
 
-    const deleted = deleteCommentById(commentId);
-    return res.status(200).json(deleted);
+    const deleteResult = await deleteCommentById(commentId);
+
+    if(deleteResult.deletedCount == 0) {
+        return res.status(400).json({
+            error: 'Nothing was deleted'
+        });
+    }
+
+    return res.status(200).json({
+        Result: "Succesfully deleted"
+    });
 }
 
 module.exports = {
