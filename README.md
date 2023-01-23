@@ -1,4 +1,4 @@
-Every basic modelling requirement has been succesfully implemented. The complete list of request operations is detailed down below. The MongoDB database is hosted in the cloud with Atlas.
+The complete list of request operations is detailed down below. The MongoDB database is hosted in the cloud with Atlas.
 
 For more info about how is each object stored, you can check the ".mongo.js" file from each model in the "models" folder.
 
