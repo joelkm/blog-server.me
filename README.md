@@ -1,8 +1,6 @@
-Every basic modelling requirement has been succesfully implemented. Additional requirements (blog co-authoring, view count and like count) also are implemented. The complete list of request operations is detailed down below. The MongoDB database is hosted in the cloud with Atlas.
+Every basic modelling requirement has been succesfully implemented. The complete list of request operations is detailed down below. The MongoDB database is hosted in the cloud with Atlas.
 
 For more info about how is each object stored, you can check the ".mongo.js" file from each model in the "models" folder.
-
-The only requirement I have not matched is hosting the server in the cloud.
 
 Checking results:
 To check the performance, download the repository files, run "npm install" in the project folder to install the required dependencies (you can check them at "package.json") and run "npm run start". Then, use Postman to check the interactions of the API with different endpoints. Every request needs to have application/json as Content-Type in the header of the request.
